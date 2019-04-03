@@ -1,0 +1,108 @@
+#set working directory
+setwd("C:\\Users\\user\\Documents\\R")
+
+#################################################
+###Run Code: Feature Selection Numeric Integer###
+#################################################
+
+#set environment for 64bit JAVA
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_201')
+
+#Load the libraries
+library("cluster")
+library("mclust")
+library("wordcloud")
+library("factoextra")
+library("ggplot2")
+
+#set random seed
+set.seed(1)
+
+###Load in the file Feature Selection Numeric/Integer First
+### Load as df
+
+#Remove the attrition label from the dataframe for clustering
+unlabeled <- df[,-1]
+
+#Confirm attrition was removed.
+str(unlabeled)
+
+sum(sapply(df, is.na))
+sum(sapply(df, is.infinite))
+sum(sapply(df, is.nan))
+
+#Set Random Seed
+set.seed(1)
+
+any(is.na(unlabeled))
+
+#K-Means : k = 2 Clusters
+kmodel1 <- kmeans(unlabeled, centers = 2, nstart = 25)
+kmodel1$tot.withinss
+kmodel1
+
+#cluster viz
+fviz_cluster(kmodel1, data = unlabeled) + ggtitle("Cluster Plot of Attrition (k=2)") + theme(plot.title = element_text(hjust = 0.5))
+#Cluster Assignment
+clusterassignment1 <- data.frame(df$Attrition, kmodel1$cluster)
+View(clusterassignment1)
+
+table(clusterassignment1)
+
+#K-Means : k = 10 Clusters
+kmodel2 <- kmeans(unlabeled, centers = 10, nstart = 25)
+kmodel2$tot.withinss
+kmodel2
+
+#cluster viz
+fviz_cluster(kmodel2, data = unlabeled) + ggtitle("Cluster Plot of Attrition (k=10)") + theme(plot.title = element_text(hjust = 0.5))
+#Cluster Assignment
+clusterassignment2 <- data.frame(df$Attrition, kmodel2$cluster)
+View(clusterassignment2)
+
+table(clusterassignment2)
+
+#K-Means : k = 15 Clusters
+kmodel3 <- kmeans(unlabeled, centers = 15, nstart = 25)
+kmodel3$tot.withinss
+kmodel3
+
+#cluster viz
+fviz_cluster(kmodel3, data = unlabeled) + ggtitle("Cluster Plot of Attrition (k=15)") + theme(plot.title = element_text(hjust = 0.5))
+#Cluster Assignment
+clusterassignment3 <- data.frame(df$Attrition, kmodel3$cluster)
+View(clusterassignment3)
+
+table(clusterassignment3)
+
+#Write the results to a txt file to import into word processor
+#write.table(clusterassignment, file = "ist707projectclusterassignment.txt", sep = ",", quote = FALSE, row.names = F)
+
+# #k model centroid Values
+# 
+# #create a dataframe with centroid values
+# kmodelcentroids <- data.frame(kmodel$centers)
+# 
+# #determine the range of the centroids values for the clusters
+# kmodelcentroidsrange <- sapply(kmodelcentroids, range)
+# 
+# #transpose the data
+# kmodelcentroidsrange <- (t(kmodelcentroidsrange))
+# 
+# #save as dataframe
+# kmodelcentroidsrange <- data.frame(kmodelcentroidsrange)
+# 
+# #rename the columns
+# colnames(kmodelcentroidsrange) <- c("minvalue", "maxvalue")
+# 
+# #find the absolute differnce
+# kmodelcentroidsrange$difference <- (kmodelcentroidsrange$maxvalue - kmodelcentroidsrange$minvalue)
+# 
+# #order as high to low
+# kmodelcentroidsrange <- kmodelcentroidsrange[order(-(kmodelcentroidsrange$difference)),]
+# 
+# #add the words to new column
+# kmodelcentroidsrange$feature <- rownames(kmodelcentroidsrange)
+# 
+# #Write the results to a txt file to import into word processor
+# write.table(kmodelcentroidsrange, file = "ist707projectcentroids.txt", sep = ",", quote = FALSE, row.names = F)
