@@ -1,9 +1,9 @@
+#set working directory
+setwd("C:\\Users\\user\\Documents\\R")
+
 #################################################
 ###Run Code: Feature Selection Numeric Integer###
 #################################################
-
-#set working directory
-setwd("C:\\Users\\user\\Documents\\R")
 
 #set environment for 64bit JAVA
 Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_201')
