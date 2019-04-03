@@ -1,0 +1,125 @@
+#################################################
+###Run Code: Feature Selection Numeric Integer###
+#################################################
+
+#set working directory
+setwd("C:\\Users\\user\\Documents\\R")
+
+#set environment for 64bit JAVA
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_201')
+
+#Load the libraries
+library("cluster")
+library("mclust")
+library("wordcloud")
+library("factoextra")
+library("ggplot2")
+
+#set random seed
+set.seed(1)
+
+#set working directory
+setwd("C:\\Users\\user\\Documents\\R")
+
+#sample df
+#Create a train set with equal number of Hamilton and Madison Papers
+temp1trainset <- df[df$Attrition=="Yes",]
+temp2trainset <- df[df$Attrition=="No",]
+
+#Create a random index by sampling all indices
+random <- sample(1:dim(temp2trainset)[1])
+temp2trainset <- temp2trainset[random[1:dim(temp1trainset)[1]], ]
+
+randomdf <- rbind(temp1trainset, temp2trainset)
+
+###Load in the file Feature Selection Numeric/Integer First
+### Load as df
+
+#Remove the attrition label from the dataframe for clustering
+unlabeled <- randomdf[,-1]
+
+#Confirm attrition was removed.
+str(unlabeled)
+
+sum(sapply(randomdf, is.na))
+sum(sapply(randomdf, is.infinite))
+sum(sapply(randomdf, is.nan))
+
+any(is.na(unlabeled))
+
+#K-Means : k = 2 Clusters
+kmodel1 <- kmeans(unlabeled, centers = 2, nstart = 25)
+kmodel1$tot.withinss
+kmodel1
+
+#cluster viz
+fviz_cluster(kmodel1, data = unlabeled) + ggtitle("Cluster Plot of Attrition (k=2)") + theme(plot.title = element_text(hjust = 0.5))
+#Cluster Assignment
+clusterassignment1 <- data.frame(randomdf$Attrition, kmodel1$cluster)
+View(clusterassignment1)
+
+table(clusterassignment1)
+
+#K-Means : k = 10 Clusters
+kmodel2 <- kmeans(unlabeled, centers = 10, nstart = 25)
+kmodel2$tot.withinss
+kmodel2
+
+#cluster viz
+fviz_cluster(kmodel2, data = unlabeled) + ggtitle("Cluster Plot of Attrition (k=10)") + theme(plot.title = element_text(hjust = 0.5))
+#Cluster Assignment
+clusterassignment2 <- data.frame(randomdf$Attrition, kmodel2$cluster)
+View(clusterassignment2)
+
+table(clusterassignment2)
+
+#K-Means : k = 15 Clusters
+kmodel3 <- kmeans(unlabeled, centers = 15, nstart = 25)
+kmodel3$tot.withinss
+kmodel3
+
+#cluster viz
+fviz_cluster(kmodel3, data = unlabeled) + ggtitle("Cluster Plot of Attrition (k=15)") + theme(plot.title = element_text(hjust = 0.5))
+#Cluster Assignment
+clusterassignment3 <- data.frame(randomdf$Attrition, kmodel3$cluster)
+View(clusterassignment3)
+
+table(clusterassignment3)
+
+#em-Means : em = 2 Clusters
+emmodel1 <- Mclust(unlabeled, G=2)
+summary(emmodel1)
+plot(emmodel1, what = "classification", dimens = c(6,1)) + ggtitle("EM Clusters, G = 2") + theme(plot.title = element_text(hjust = 0.5))
+
+#Cluster Assignment
+clusterassignmente1 <- data.frame(randomdf$Attrition, emmodel1$classification)
+View(clusterassignmente1)
+
+table(clusterassignmente1)
+
+#em-Means : em = 10 Clusters
+emmodel2 <- Mclust(unlabeled, G=10)
+summary(emmodel2)
+plot(emmodel2, what = "classification", dimens = c(6,1)) + ggtitle("EM Clusters, G = 10") + theme(plot.title = element_text(hjust = 0.5))
+
+#Cluster Assignment
+clusterassignmente2 <- data.frame(randomdf$Attrition, emmodel2$classification)
+View(clusterassignmente2)
+
+table(clusterassignmente2)
+
+#em-Means : em = 15 Clusters
+
+#em-Means : em = 10 Clusters
+emmodel3 <- Mclust(unlabeled, G=15)
+summary(emmodel3)
+plot(emmodel3, what = "classification", dimens = c(6,1)) + ggtitle("EM Clusters, G = 15") + theme(plot.title = element_text(hjust = 0.5))
+
+#Cluster Assignment
+clusterassignmente3 <- data.frame(randomdf$Attrition, emmodel3$classification)
+View(clusterassignmente3)
+
+table(clusterassignmente3)
+
+#Write the results to a txt file to import into word processor
+#write.table(clusterassignment, file = "ist707projectclusterassignment.txt", sep = ",", quote = FALSE, row.names = F)
