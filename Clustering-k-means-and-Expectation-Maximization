@@ -106,3 +106,38 @@ table(clusterassignment3)
 # 
 # #Write the results to a txt file to import into word processor
 # write.table(kmodelcentroidsrange, file = "ist707projectcentroids.txt", sep = ",", quote = FALSE, row.names = F)
+
+#em-Means : em = 2 Clusters
+emmodel1 <- Mclust(unlabeled, G=2)
+summary(emmodel1)
+plot(emmodel1, what = "classification", dimens = c(6,1)) + ggtitle("EM Clusters, G = 2") + theme(plot.title = element_text(hjust = 0.5))
+
+#Cluster Assignment
+clusterassignmente1 <- data.frame(df$Attrition, emmodel1$classification)
+View(clusterassignmente1)
+
+table(clusterassignmente1)
+
+#em-Means : em = 10 Clusters
+emmodel2 <- Mclust(unlabeled, G=10)
+summary(emmodel2)
+plot(emmodel2, what = "classification", dimens = c(6,1)) + ggtitle("EM Clusters, G = 10") + theme(plot.title = element_text(hjust = 0.5))
+
+#Cluster Assignment
+clusterassignmente2 <- data.frame(df$Attrition, emmodel2$classification)
+View(clusterassignmente2)
+
+table(clusterassignmente2)
+
+#em-Means : em = 15 Clusters
+
+#em-Means : em = 15 Clusters
+emmodel3 <- Mclust(unlabeled, G=15)
+summary(emmodel3)
+plot(emmodel3, what = "classification", dimens = c(6,1)) + ggtitle("EM Clusters, G = 15") + theme(plot.title = element_text(hjust = 0.5))
+
+#Cluster Assignment
+clusterassignmente3 <- data.frame(df$Attrition, emmodel3$classification)
+View(clusterassignmente3)
+
+table(clusterassignmente3)
