@@ -78,35 +78,6 @@ table(clusterassignment3)
 #Write the results to a txt file to import into word processor
 #write.table(clusterassignment, file = "ist707projectclusterassignment.txt", sep = ",", quote = FALSE, row.names = F)
 
-# #k model centroid Values
-# 
-# #create a dataframe with centroid values
-# kmodelcentroids <- data.frame(kmodel$centers)
-# 
-# #determine the range of the centroids values for the clusters
-# kmodelcentroidsrange <- sapply(kmodelcentroids, range)
-# 
-# #transpose the data
-# kmodelcentroidsrange <- (t(kmodelcentroidsrange))
-# 
-# #save as dataframe
-# kmodelcentroidsrange <- data.frame(kmodelcentroidsrange)
-# 
-# #rename the columns
-# colnames(kmodelcentroidsrange) <- c("minvalue", "maxvalue")
-# 
-# #find the absolute differnce
-# kmodelcentroidsrange$difference <- (kmodelcentroidsrange$maxvalue - kmodelcentroidsrange$minvalue)
-# 
-# #order as high to low
-# kmodelcentroidsrange <- kmodelcentroidsrange[order(-(kmodelcentroidsrange$difference)),]
-# 
-# #add the words to new column
-# kmodelcentroidsrange$feature <- rownames(kmodelcentroidsrange)
-# 
-# #Write the results to a txt file to import into word processor
-# write.table(kmodelcentroidsrange, file = "ist707projectcentroids.txt", sep = ",", quote = FALSE, row.names = F)
-
 #em-Means : em = 2 Clusters
 emmodel1 <- Mclust(unlabeled, G=2)
 summary(emmodel1)
