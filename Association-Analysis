@@ -1,0 +1,121 @@
+#set working directory
+setwd("C:\\Users\\user\\Documents\\R")
+
+########################################
+###Run Code: Feature Selection Factor###
+########################################
+
+#Load Libraries
+library("arules")
+library("arulesViz")
+library("ggplot2")
+
+str(df)
+
+#convert the dataframe into a transactions dataset
+hrtransactions <- as(df, "transactions")
+
+####set the RHS = attrition NO
+#rule generation for RHS attrition
+norules <- apriori(hrtransactions, parameter=list(support=0.3, confidence=0.90), 
+                        appearance = list(default="lhs", rhs= ("Attrition=No")), 
+                        control = list(verbose=F))
+summary(norules)
+inspect(norules)
+
+#Plot the rules
+plot(norules, main = "Scatterplot for 25 Rules where RHS = Attrition No (support = 0.3, confidence = 0.9)")
+
+####set the RHS = attrition YES
+#rule generation for RHS attrition
+yesrules <- apriori(hrtransactions, parameter=list(support=0.0129, confidence=0.80), 
+                   appearance = list(default="lhs", rhs= ("Attrition=Yes")), 
+                   control = list(verbose=F))
+summary(yesrules)
+inspect(yesrules)
+
+#Plot the rules
+plot(yesrules, main = "Scatterplot for 39 Rules where RHS = Attrition Yes (support = 0.0129, confidence = 0.80)")
+
+
+
+####Top 10 Support
+#rule generation for RHS attrition
+suprules <- apriori(hrtransactions, parameter=list(support=0.55, confidence=0.001), 
+                    appearance = list(default="lhs", rhs= c("Attrition=Yes","Attrition=No")), 
+                    control = list(verbose=F))
+summary(suprules)
+inspect(suprules)
+
+#Plot the rules
+plot(suprules, main = "Scatterplot for Top 10 Support Rules where RHS = Attrition Yes/No")
+
+
+####Top 10 Confidence
+#rule generation for RHS attrition
+conrules <- apriori(hrtransactions, parameter=list(support=0.05, confidence=1), 
+                    appearance = list(default="lhs", rhs= c("Attrition=Yes","Attrition=No")), 
+                    control = list(verbose=F))
+summary(conrules)
+inspect(conrules)
+
+#Plot the rules
+plot(conrules, main = "Scatterplot for Top 11 Confidence Rules where RHS = Attrition Yes/No")
+
+####Top 10 Lift
+#rule generation for RHS attrition
+rules <- apriori(hrtransactions, parameter=list(support=0.01, confidence=0.01), 
+                    appearance = list(default="lhs", rhs= c("Attrition=Yes","Attrition=No")), 
+                    control = list(verbose=F))
+
+#check for better rules
+liftrules <- rules[quality(rules)$lift > 5.812][1:10]
+summary(liftrules)
+inspect(liftrules)
+
+#Plot the rules
+plot(liftrules, main = "Scatterplot for Top 10 Lift Rules where RHS = Attrition Yes/No")
+
+
+
+####Top Rules for OverTime
+#rule generation for RHS attrition and LHS overtime
+otrules <- apriori(hrtransactions, parameter=list(support=0.01, confidence=0.01), 
+                   appearance = list(lhs=c("OverTime=Yes","OverTime=No"), rhs= c("Attrition=No","Attrition=Yes")), 
+                   control = list(verbose=F))
+summary(otrules)
+inspect(otrules)
+
+#Plot the rules
+plot(otrules, main = "Scatterplot for 6 Rules where LHS = OverTime & RHS = Attrition")
+
+####Top Rules for Age
+#rule generation for RHS attrition and LHS Age
+agerules <- apriori(hrtransactions, parameter=list(support=0.01, confidence=0.01), 
+                   appearance = list(lhs=c("Age=18-25", "Age=26-30", "Age=31-40", "Age=41-50", "Age=51-60"), rhs= c("Attrition=No","Attrition=Yes")), 
+                   control = list(verbose=F))
+summary(agerules)
+inspect(agerules)
+
+#Plot the rules
+plot(agerules, main = "Scatterplot for 12 Rules where LHS = Age & RHS = Attrition")
+
+####Top Rules for Monthly Income
+#rule generation for RHS attrition and LHS Monthly Income
+incomerules <- apriori(hrtransactions, parameter=list(support=0.01, confidence=0.01), 
+                    appearance = list(lhs=c("MonthlyIncome=0-2695.8","MonthlyIncome=2695.9-4228.8","MonthlyIncome=4228.9-5743.4","MonthlyIncome=5743.5-9860","MonthlyIncome=9861-13775.6","MonthlyIncome=13775.6-19999"), rhs= c("Attrition=No","Attrition=Yes")), 
+                    control = list(verbose=F))
+summary(incomerules)
+inspect(incomerules)
+
+#Plot the rules
+plot(incomerules, main = "Scatterplot for 12 Rules where LHS = Monthly Income & RHS = Attrition")
+
+write(norules, file = "norules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(yesrules, file = "yesrules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(suprules, file = "suprules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(conrules, file = "conrules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(liftrules, file = "liftrules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(agerules, file = "agerules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(otrules, file = "otrules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
+write(incomerules, file = "incomerules.csv", sep = ",", quote = TRUE, row.names = FALSE) 
