@@ -1,0 +1,189 @@
+#set working directory
+setwd("C:\\Users\\user\\Documents\\R")
+
+#read in the titanic csv
+df <- read.csv("ibmhr.csv")
+
+#Check for NAs
+any(is.na(df))
+
+#Check for duplicates
+any(duplicated(df))
+
+#Check the attribute types
+str(df)
+
+##rename age variable
+df$Age <- df$ï..Age
+df$ï..Age <- NULL
+
+##Over18
+#Since age is a variable and no individual is younger than 18
+#This field can be removed
+df$Over18 <- NULL
+
+##Remove the EmployeeNumber as it is unnecessary
+#No useful infomraion provided
+df$EmployeeNumber <- NULL
+
+##Multiple Income Measures are reported. Monthly Income will be used
+#Remove other income variables
+df$MonthlyRate <- NULL
+df$DailyRate <- NULL
+df$HourlyRate <- NULL
+
+##Employee Count
+min(df$EmployeeCount)
+max(df$EmployeeCount)
+
+#There is no relevant information in Employee Count
+#All instances equal
+#Will be Removed
+
+df$EmployeeCount <- NULL
+
+
+##Standard Hours
+min(df$StandardHours)
+max(df$StandardHours)
+
+#There is no relevant information in Standard Hours
+#If standard hours are 80, does this mean this is a biweekly report?
+#Or are they overworked?
+#All instances equal
+#Will be Removed
+
+df$StandardHours <- NULL
+
+
+##EducationalField
+#Educational Field should not have an impact on their current job role
+#Remove Educational Field
+df$EducationField <- NULL
+
+##Job Role
+#To reduce variability in the results
+#A department overview of attrition will be a better choice
+#Remove Job Roles
+df$JobRole <- NULL
+
+
+##Total Working Years
+#This can be considered a proxy for age
+#in this case it can be removed.
+df$TotalWorkingYears <- NULL
+
+##NumCompaniesWorked
+#This can be considered a proxy for age as well
+#in this case it can be removed.
+df$NumCompaniesWorked <- NULL
+
+#Check Structures
+str(df)
+
+###Convert Variables into Factors
+
+##Age
+min(df$Age)
+max(df$Age)
+
+#Age break needs to be lower than 18 to be inclusive of 18
+#using the min and max age discretize the age variable with the appropriate breaks/bins
+df$Age <- cut(df$Age, breaks=c(0,25,30,40,50,60), labels=c("18-25","26-30","31-40","41-50","51-60"))
+
+##Monthly Income
+min(df$MonthlyIncome)
+max(df$MonthlyIncome)
+mean(df$MonthlyIncome)
+median(df$MonthlyIncome)
+quantile(df$MonthlyIncome, c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1))
+quantile(df$MonthlyIncome, c(0,0.2,0.4,0.6,0.8,0.9,1))
+
+#discretize the income variable with the appropriate breaks/bins
+df$MonthlyIncome <- cut(df$MonthlyIncome, breaks=c(0,2695.8,4228.8,5743.4,9860,13775.6,19999), labels=c("0-2695.8","2695.9-4228.8","4228.9-5743.4","5743.5-9860","9861-13775.6","13775.6-19999"))
+
+##Distance from Home
+min(df$DistanceFromHome)
+max(df$DistanceFromHome)
+
+df$DistanceFromHome <- cut(df$DistanceFromHome, breaks = c(0,15,30), labels = c("Close", "Far"))
+
+##Percent Salary Hike
+min(df$PercentSalaryHike)
+max(df$PercentSalaryHike)
+
+df$PercentSalaryHike <- cut(df$PercentSalaryHike, breaks = c(10, 15, 20, 25), labels = c("Low","Mid","High"))
+
+##Years At Company
+min(df$YearsAtCompany)
+max(df$YearsAtCompany)
+
+df$YearsAtCompany <- cut(df$YearsAtCompany, breaks = c(-1,5,10,20,40), labels = c("0-5", "6-10","11-20", "20+"))
+
+##Years in Current Role
+min(df$YearsInCurrentRole)
+max(df$YearsInCurrentRole)
+
+df$YearsInCurrentRole <- cut(df$YearsInCurrentRole, breaks = c(-1,5,10,18), labels = c("0-5","6-10","11-18"))
+
+##Years Since Last Promotion
+min(df$YearsSinceLastPromotion)
+max(df$YearsSinceLastPromotion)
+
+df$YearsSinceLastPromotion <- cut(df$YearsSinceLastPromotion, breaks = c(-1,5,10,15), labels = c("0-5", "6-10", "11-15"))
+
+##Years with Current Manager
+min(df$YearsWithCurrManager)
+max(df$YearsWithCurrManager)
+
+df$YearsWithCurrManager <- cut(df$YearsWithCurrManager, breaks = c(-1,5,10,15,17), labels = c("0-5", "6-10", "11-15", "15+"))
+
+str(df)
+
+##Education
+df$Education <- factor(df$Education, ordered = TRUE)
+
+##Environment Satisfaction
+df$EnvironmentSatisfaction <- factor(df$EnvironmentSatisfaction, ordered = TRUE)
+
+##Job Involvement
+df$JobInvolvement <- factor(df$JobInvolvement, ordered =TRUE)
+
+#Job Level
+df$JobLevel <- factor(df$JobLevel, ordered =TRUE)
+
+#Job Satisfication
+df$JobSatisfaction <- factor(df$JobSatisfaction, ordered =TRUE)
+
+#Performance Rating
+df$PerformanceRating <- factor(df$PerformanceRating, ordered = TRUE)
+
+#Relationship Satifiscation
+df$RelationshipSatisfaction <- factor(df$RelationshipSatisfaction, ordered =TRUE)
+
+#Stock Options Level
+df$StockOptionLevel <- factor(df$StockOptionLevel, ordered = TRUE)
+
+#Training Times Last Year
+df$TrainingTimesLastYear <- factor(df$TrainingTimesLastYear, ordered = TRUE)
+
+#Work Life Balance
+df$WorkLifeBalance <- factor(df$WorkLifeBalance, ordered = TRUE)
+
+
+#Check Structure
+str(df)
+
+any(is.na(df))
+backup <- df
+
+
+#Pie Chart for Attrition Rates
+a <- sum(df$Attrition=='Yes')
+b <- sum(df$Attrition=='No')
+slices <- c(a, b) 
+lbls <- c("Employees leaving", "Employees retained") 
+pct <- round(slices/sum(slices)*100, digits=2) 
+lbls <- paste(lbls, pct)   
+lbls <- paste(lbls,"%",sep="")  
+pie(slices, labels = lbls, main="Attrition Rates at IBM", col = c("green", "darkgreen")) 
